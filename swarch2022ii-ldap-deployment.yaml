@@ -1,0 +1,89 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.17.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: swarch2022ii-ldap
+  name: swarch2022ii-ldap
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: swarch2022ii-ldap
+    spec:
+      containers:
+      - env:
+        - name: COMPOSE_HTTP_TIMEOUT
+          value: "200"
+        - name: LDAP_ADMIN_PASSWORD
+          value: admin
+        - name: LDAP_BACKEND
+          value: hdb
+        - name: LDAP_BASE_DN
+        - name: LDAP_CONFIG_PASSWORD
+          value: config
+        - name: LDAP_DOMAIN
+          value: arqsoft.unal.edu.co
+        - name: LDAP_LOG_LEVEL
+          value: "256"
+        - name: LDAP_ORGANISATION
+          value: Software Architecture
+        - name: LDAP_READONLY_USER
+          value: "false"
+        - name: LDAP_REMOVE_CONFIG_AFTER_SETUP
+          value: "true"
+        - name: LDAP_REPLICATION
+          value: "false"
+        - name: LDAP_SSL_HELPER_PREFIX
+          value: ldap
+        - name: LDAP_TLS
+          value: "true"
+        - name: LDAP_TLS_CA_CRT_FILENAME
+          value: ca.crt
+        - name: LDAP_TLS_CIPHER_SUITE
+          value: SECURE256:-VERS-SSL3.0
+        - name: LDAP_TLS_CRT_FILENAME
+          value: ldap.crt
+        - name: LDAP_TLS_ENFORCE
+          value: "false"
+        - name: LDAP_TLS_KEY_FILENAME
+          value: ldap.key
+        - name: LDAP_TLS_PROTOCOL_MIN
+          value: "3.1"
+        - name: LDAP_TLS_VERIFY_CLIENT
+          value: demand
+        image: osixia/openldap:1.1.8
+        name: swarch2022ii_ldap
+        ports:
+        - containerPort: 389
+        - containerPort: 636
+        resources: {}
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /var/lib/ldap
+          name: swarch2022ii-ldap-claim0
+        - mountPath: /etc/ldap/slapd.d
+          name: swarch2022ii-ldap-claim1
+        - mountPath: /container/service/slapd/assets/certs/
+          name: swarch2022ii-ldap-claim2
+      hostname: arqsoft.unal.edu.co
+      restartPolicy: Always
+      volumes:
+      - name: swarch2022ii-ldap-claim0
+        persistentVolumeClaim:
+          claimName: swarch2022ii-ldap-claim0
+      - name: swarch2022ii-ldap-claim1
+        persistentVolumeClaim:
+          claimName: swarch2022ii-ldap-claim1
+      - name: swarch2022ii-ldap-claim2
+        persistentVolumeClaim:
+          claimName: swarch2022ii-ldap-claim2
+status: {}
